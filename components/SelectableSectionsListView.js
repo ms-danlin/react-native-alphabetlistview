@@ -32,6 +32,8 @@ export default class SelectableSectionsListView extends Component {
       offsetY: 0
     };
 
+    this.isComponentUnMounted = false;
+
     this.renderFooter = this.renderFooter.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -53,12 +55,18 @@ export default class SelectableSectionsListView extends Component {
     this.calculateTotalHeight();
   }
 
+  componentWillUnmount() {
+    this.isComponentUnMounted = true;
+  }
+
   componentDidMount() {
     // push measuring into the next tick
     setTimeout(() => {
-      UIManager.measure(ReactNative.findNodeHandle(this.refs.view), (x,y,w,h) => {
-        this.containerHeight = h;
-      });
+      if (!this.isComponentUnMounted) {
+        UIManager.measure(ReactNative.findNodeHandle(this.refs.view), (x, y, w, h) => {
+          this.containerHeight = h;
+        });
+      }
     }, 0);
   }
 
